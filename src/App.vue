@@ -1,0 +1,164 @@
+<template>
+  <div class="center">
+    <div class="card hover:shadow-lg hover:border-black">
+      <font-awesome-icon
+        icon="fa-solid fa-user-tie"
+        class="fa-xl items-center my-3 w-full"
+      />
+      <Select
+        :items="types"
+        v-model="type"
+        name="type"
+        required
+        :value="type || 'text'"
+      />
+      <Input placeholder="Prompt" v-model="prompt" name="prompt" required />
+      <template v-if="type === 'Image'">
+        <Input
+          :value="number || 1"
+          :min="1"
+          :max="10"
+          type="number"
+          name="Quantity"
+          placeholder="Quantity"
+          v-model="number"
+        />
+        <Select
+          :items="sizes"
+          v-model="resolution"
+          name="resolution"
+          :value="type || '256x256'"
+        />
+      </template>
+      <Button
+        @generate="generate"
+        :loading="loading"
+        :disabled="!!!prompt || !!!type"
+      />
+      <Alert
+        v-if="error"
+        text="Check API Key or internet connection"
+        @click="error = false"
+        title="Click to close"
+      />
+    </div>
+    <div
+      v-if="images && images.length"
+      class="card hover:shadow-lg hover:border-black"
+    >
+      <h3 class="header">Images</h3>
+      <div class="grid grid-cols-4 gap-4">
+        <template v-for="image in images">
+          <img class="object-cover border" :src="image" />
+        </template>
+      </div>
+    </div>
+    <div
+      v-if="texts && texts.length"
+      class="card hover:shadow-lg hover:border-black"
+    >
+      <h3 class="header">Text</h3>
+      <TransitionGroup name="list" tag="ul">
+        <template v-for="text in texts" :key="index">
+          <li>
+            <font-awesome-icon
+              icon="fa-solid fa-chevron-right"
+              class="px-4"
+            />{{ text }}
+          </li>
+        </template>
+      </TransitionGroup>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Input from "./components/Input.vue";
+import Select from "./components/Select.vue";
+import Button from "./components/Button.vue";
+import Alert from "./components/Alert.vue";
+
+import { useImageStore } from "../stores/image";
+import { useTextStore } from "../stores/text";
+
+import { Configuration, OpenAIApi } from "openai";
+import { ref } from "vue";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+library.add(faUserTie, faChevronRight);
+
+const configuration = new Configuration({
+  apiKey: import.meta.env.VITE_Open_AI_Key,
+});
+const openai = new OpenAIApi(configuration);
+
+export default {
+  name: "App",
+  components: {
+    Input,
+    Select,
+    Button,
+    Alert,
+    FontAwesomeIcon,
+  },
+  setup() {
+    let prompt = ref("");
+    let images = ref([]);
+    let texts = ref([]);
+    let number = ref("");
+    let type = ref("");
+    let resolution = ref("");
+    let loading = ref(false);
+    let error = ref(false);
+    const textStore = useTextStore();
+    const imageStore = useImageStore();
+
+    const sizes = [
+      { text: "256x256", value: "256x256" },
+      { text: "512x512", value: "512x512" },
+      { text: "1024x1024", value: "1024x1024" },
+    ];
+
+    const types = [
+      { text: "Text", value: "Text" },
+      { text: "Image", value: "Image" },
+    ];
+
+    function generate() {
+      loading.value = true;
+      setTimeout(getStore, 300);
+    }
+
+    function getStore() {
+      if (type.value === "Text") {
+        textStore.fetchText(openai, prompt.value);
+        texts.value = textStore.getText;
+        error.value = textStore.getTextError;
+      } else {
+        imageStore.fetchImage(openai, prompt.value);
+        images.value = imageStore.getImage;
+        error.value = imageStore.getImageError;
+      }
+      loading.value = false;
+    }
+
+    return {
+      generate,
+      error,
+      prompt,
+      images,
+      number,
+      type,
+      resolution,
+      loading,
+      sizes,
+      types,
+      texts,
+    };
+  },
+};
+</script>
+
