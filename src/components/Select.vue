@@ -4,7 +4,7 @@
     @change="change($event)"
     class="select focus:outline-none focus:shadow-outline"
   >
-    <option hidden selected>Select option</option>
+    <option selected hidden>Select option</option>
     <option v-for="item in props.items" :value="item.value" :key="item.id">
       {{ item.text }}
     </option>
@@ -15,7 +15,7 @@
 export default {
   name: "Select",
   props: {
-    items: { type: Object, default: undefined },
+    items: { type: Object, required: true },
     name: { type: String, default: undefined },
   },
   setup(props, { emit }) {

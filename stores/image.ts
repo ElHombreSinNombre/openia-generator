@@ -15,12 +15,17 @@ export const useImageStore = defineStore("image", {
     },
   },
   actions: {
-    async fetchImage(openai: OpenAIApi, value: string) {
+    async fetchImage(
+      openai: OpenAIApi,
+      value: string,
+      number: string,
+      resolution: any
+    ) {
       try {
         const res = await openai.createImage({
           prompt: value,
-          n: 2,
-          size: "256x256" || "256x256",
+          n: parseInt(number),
+          size: resolution,
         });
         if (res.status == 200) {
           res.data.data.forEach((image: any) => {

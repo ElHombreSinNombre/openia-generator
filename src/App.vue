@@ -5,17 +5,11 @@
         icon="fa-solid fa-user-tie"
         class="fa-xl items-center my-3 w-full"
       />
-      <Select
-        :items="types"
-        v-model="type"
-        name="type"
-        required
-        :value="type || 'text'"
-      />
+      <Select v-model="type" :items="types" name="type" required />
       <Input placeholder="Prompt" v-model="prompt" name="prompt" required />
       <template v-if="type === 'Image'">
         <Input
-          :value="number || 1"
+          :value="number"
           :min="1"
           :max="10"
           type="number"
@@ -27,7 +21,7 @@
           :items="sizes"
           v-model="resolution"
           name="resolution"
-          :value="type || '256x256'"
+          required
         />
       </template>
       <Button
@@ -108,7 +102,7 @@ export default {
     let prompt = ref("");
     let images = ref([]);
     let texts = ref([]);
-    let number = ref("");
+    let number = ref(1);
     let type = ref("");
     let resolution = ref("");
     let loading = ref(false);
@@ -138,7 +132,12 @@ export default {
         texts.value = textStore.getText;
         error.value = textStore.getTextError;
       } else {
-        imageStore.fetchImage(openai, prompt.value);
+        imageStore.fetchImage(
+          openai,
+          prompt.value,
+          number.value,
+          resolution.value
+        );
         images.value = imageStore.getImage;
         error.value = imageStore.getImageError;
       }
