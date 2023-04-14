@@ -37,11 +37,7 @@
           required
         />
       </template>
-      <Button
-        @generate="generate"
-        :loading="loading"
-        :disabled="!!!prompt || !!!type"
-      />
+      <Button @generate="generate" :loading="loading" :disabled="isDisabled" />
       <Alert
         v-if="error"
         text="Check API Key or internet connection"
@@ -84,12 +80,14 @@
       <TransitionGroup name="completion">
         <template v-for="completion in completions" :key="index">
           <pre
-            v-if="prompt.includes('JSON') || prompt.includes('json')"
-            class="card max-h-72 overflow-y-auto"
+            @click="copy(completion)"
+            v-if="isJSON"
+            title="Click to copy"
+            class="card minicard bg-slate-900 text-gray-50 cursor-pointer"
           >
-            {{ JSON.parse(completion) }}
+            {{ completion }}
           </pre>
-          <div v-else class="card max-h-72 overflow-y-auto">
+          <div v-else class="card minicard">
             {{ completion }}
           </div>
         </template>
@@ -110,7 +108,7 @@ import { useTextStore } from "../stores/text";
 import { useCompletionStore } from "../stores/Completion";
 
 import { Configuration, OpenAIApi } from "openai";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -159,9 +157,21 @@ export default {
       { text: "Image", value: "Image" },
     ];
 
+    const isDisabled = computed(() => {
+      return type.value === "Image"
+        ? !prompt.value || !type.value || !resolution.value
+        : !type.value || !prompt.value;
+    });
+
+    const isJSON = computed(() => prompt.value.toLowerCase().includes("json"));
+
     function generate() {
       loading.value = true;
       setTimeout(getStore, 300);
+    }
+
+    function copy(completion: string) {
+      navigator.clipboard.writeText(completion);
     }
 
     function getStore() {
@@ -189,10 +199,13 @@ export default {
     return {
       generate,
       error,
+      isJSON,
       prompt,
       images,
       number,
       type,
+      copy,
+      isDisabled,
       resolution,
       completions,
       loading,
