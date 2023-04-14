@@ -35,7 +35,7 @@ body {
     @apply duration-500;
     @apply ease-in-out;
     @apply p-6;
-    @apply m-2;
+    @apply m-8;
   }
 
   .center {
@@ -43,7 +43,6 @@ body {
     @apply items-center;
     @apply justify-center;
     @apply min-h-screen;
-    @apply m-8;
   }
 
   .header {

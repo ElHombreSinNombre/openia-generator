@@ -6,7 +6,20 @@
         class="fa-xl items-center my-3 w-full"
       />
       <Select v-model="type" :items="types" name="type" required />
-      <Input placeholder="Prompt" v-model="prompt" name="prompt" required />
+      <Input
+        placeholder="Prompt"
+        v-model="prompt"
+        name="prompt"
+        required
+        v-if="type !== 'Completion'"
+      />
+      <Textarea
+        placeholder="Prompt"
+        v-model="prompt"
+        name="prompt"
+        required
+        v-else
+      />
       <template v-if="type === 'Image'">
         <Input
           :value="number"
@@ -63,17 +76,38 @@
         </template>
       </TransitionGroup>
     </div>
+    <div
+      v-if="completions && completions.length"
+      class="card hover:shadow-lg hover:border-black"
+    >
+      <h3 class="header">Completions</h3>
+      <TransitionGroup name="completion">
+        <template v-for="completion in completions" :key="index">
+          <pre
+            v-if="prompt.includes('JSON') || prompt.includes('json')"
+            class="card max-h-72 overflow-y-auto"
+          >
+            {{ JSON.parse(completion) }}
+          </pre>
+          <div v-else class="card max-h-72 overflow-y-auto">
+            {{ completion }}
+          </div>
+        </template>
+      </TransitionGroup>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Input from "./components/Input.vue";
+import Textarea from "./components/Textarea.vue";
 import Select from "./components/Select.vue";
 import Button from "./components/Button.vue";
 import Alert from "./components/Alert.vue";
 
 import { useImageStore } from "../stores/image";
 import { useTextStore } from "../stores/text";
+import { useCompletionStore } from "../stores/Completion";
 
 import { Configuration, OpenAIApi } from "openai";
 import { ref } from "vue";
@@ -94,6 +128,7 @@ export default {
   components: {
     Input,
     Select,
+    Textarea,
     Button,
     Alert,
     FontAwesomeIcon,
@@ -102,11 +137,13 @@ export default {
     let prompt = ref("");
     let images = ref([]);
     let texts = ref([]);
+    let completions = ref([]);
     let number = ref(1);
     let type = ref("");
     let resolution = ref("");
     let loading = ref(false);
     let error = ref(false);
+    const completionStore = useCompletionStore();
     const textStore = useTextStore();
     const imageStore = useImageStore();
 
@@ -118,6 +155,7 @@ export default {
 
     const types = [
       { text: "Text", value: "Text" },
+      { text: "Completion", value: "Completion" },
       { text: "Image", value: "Image" },
     ];
 
@@ -131,7 +169,7 @@ export default {
         textStore.fetchText(openai, prompt.value);
         texts.value = textStore.getText;
         error.value = textStore.getTextError;
-      } else {
+      } else if (type.value === "Image") {
         imageStore.fetchImage(
           openai,
           prompt.value,
@@ -140,6 +178,10 @@ export default {
         );
         images.value = imageStore.getImage;
         error.value = imageStore.getImageError;
+      } else {
+        completionStore.fetchCompletion(openai, prompt.value);
+        completions.value = completionStore.getCompletion;
+        error.value = textStore.getCompletionStore;
       }
       loading.value = false;
     }
@@ -152,6 +194,7 @@ export default {
       number,
       type,
       resolution,
+      completions,
       loading,
       sizes,
       types,
