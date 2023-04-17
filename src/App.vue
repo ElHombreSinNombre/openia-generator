@@ -6,20 +6,36 @@
         class="fa-xl items-center my-3 w-full"
       />
       <Select v-model="type" :items="types" name="type" required />
-      <Input
-        placeholder="Prompt"
-        v-model="prompt"
-        name="prompt"
-        required
-        v-if="type !== 'Completion'"
-      />
-      <Textarea
-        placeholder="Prompt"
-        v-model="prompt"
-        name="prompt"
-        required
-        v-else
-      />
+      <template v-if="type !== 'Completion'">
+        <Input
+          placeholder="Prompt"
+          v-model="prompt"
+          name="prompt"
+          maxlength="50"
+          required
+        />
+        <div
+          class="text-right"
+          :class="{ 'text-red-500	': prompt.length === 50 }"
+        >
+          {{ prompt.length }} / 50
+        </div>
+      </template>
+      <template v-else>
+        <Textarea
+          placeholder="Prompt"
+          v-model="prompt"
+          maxlength="3000"
+          name="prompt"
+          required
+        />
+        <div
+          class="text-right"
+          :class="{ 'text-red-500	': prompt.length === 3000 }"
+        >
+          {{ prompt.length }} / 3000
+        </div>
+      </template>
       <template v-if="type === 'Image'">
         <Input
           :value="number"

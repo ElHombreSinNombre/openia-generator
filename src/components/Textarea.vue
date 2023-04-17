@@ -3,6 +3,7 @@
     @input="change($event)"
     class="input focus:outline-none focus:shadow-outline"
     :rows="rows"
+    :max="max"
     :cols="cols"
     :placeholder="placeholder"
   />
@@ -12,6 +13,7 @@
 export default {
   name: "Textarea",
   props: {
+    max: { type: Number, default: 3000 },
     name: { type: String, default: undefined },
     rows: { type: Number, default: 10 },
     cols: { type: Number, default: 50 },
