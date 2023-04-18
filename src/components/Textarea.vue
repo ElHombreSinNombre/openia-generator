@@ -7,6 +7,7 @@
     :cols="cols"
     :placeholder="placeholder"
   />
+  <slot />
 </template>
 
 <script lang="ts">

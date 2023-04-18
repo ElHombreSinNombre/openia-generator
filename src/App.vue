@@ -5,40 +5,45 @@
         icon="fa-solid fa-user-tie"
         class="fa-xl items-center my-3 w-full"
       />
-      <Select v-model="type" :items="types" name="type" required />
-      <template v-if="type !== 'Completion'">
-        <Input
-          placeholder="Prompt"
-          v-model="prompt"
-          name="prompt"
-          maxlength="50"
-          required
-        />
+      <Select
+        v-model="type"
+        :items="types"
+        name="type"
+        required
+        @clear="clear()"
+      />
+      <Input
+        v-if="type !== 'Completion'"
+        placeholder="Prompt"
+        v-model="prompt"
+        name="prompt"
+        maxlength="50"
+        required
+      >
         <div
           class="text-right"
           :class="{ 'text-red-500	': prompt.length === 50 }"
         >
           {{ prompt.length }} / 50
         </div>
-      </template>
-      <template v-else>
-        <Textarea
-          placeholder="Prompt"
-          v-model="prompt"
-          maxlength="3000"
-          name="prompt"
-          required
-        />
+      </Input>
+      <Textarea
+        v-else
+        placeholder="Prompt"
+        v-model="prompt"
+        maxlength="3000"
+        name="prompt"
+        required
+      >
         <div
           class="text-right"
           :class="{ 'text-red-500	': prompt.length === 3000 }"
         >
           {{ prompt.length }} / 3000
         </div>
-      </template>
+      </Textarea>
       <template v-if="type === 'Image'">
         <Input
-          :value="number"
           :min="1"
           :max="10"
           type="number"
@@ -67,9 +72,17 @@
     >
       <h3 class="header">Images</h3>
       <div class="grid grid-cols-4 gap-4">
-        <template v-for="image in images">
-          <img class="object-cover border" :src="image" />
-        </template>
+        <TransitionGroup name="images">
+          <template v-for="image in images">
+            <img
+              class="object-cover border"
+              :src="image.image"
+              :title="image.value"
+              loading="lazy"
+              alt="Image"
+            />
+          </template>
+        </TransitionGroup>
       </div>
     </div>
     <div
@@ -152,7 +165,7 @@ export default {
     let images = ref([]);
     let texts = ref([]);
     let completions = ref([]);
-    let number = ref(1);
+    let number = ref(0);
     let type = ref("");
     let resolution = ref("");
     let loading = ref(false);
@@ -175,7 +188,7 @@ export default {
 
     const isDisabled = computed(() => {
       return type.value === "Image"
-        ? !prompt.value || !type.value || !resolution.value
+        ? !prompt.value || !type.value || !resolution.value || !number.value
         : !type.value || !prompt.value;
     });
 
@@ -188,6 +201,10 @@ export default {
 
     function copy(completion: string) {
       navigator.clipboard.writeText(completion);
+    }
+
+    function clear() {
+      prompt.value = "";
     }
 
     function getStore() {
@@ -221,6 +238,7 @@ export default {
       number,
       type,
       copy,
+      clear,
       isDisabled,
       resolution,
       completions,

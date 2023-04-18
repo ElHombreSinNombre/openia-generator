@@ -20,6 +20,7 @@ export default {
   },
   setup(props, { emit }) {
     const change = (event: any) => {
+      emit("clear");
       emit("update:modelValue", event.target.value);
     };
     return {

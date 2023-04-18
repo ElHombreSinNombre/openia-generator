@@ -29,7 +29,7 @@ export const useImageStore = defineStore("image", {
         });
         if (res.status == 200) {
           res.data.data.forEach((image: any) => {
-            this.image.push(image.url);
+            this.image.push({ image: image.url, value: value });
           });
         }
       } catch (e) {
