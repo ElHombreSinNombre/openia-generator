@@ -5,6 +5,7 @@ Technologies
 - **[Vite](https://vitejs.dev/)**
 - **[Tailwind](https://tailwindcss.com/)**
 - **[Vue 3](https://vuejs.org/)**
+- **[Pinia](https://pinia.vuejs.org/)**
 
 Clone _.env.example_ and rename as _.env_
 
