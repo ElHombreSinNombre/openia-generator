@@ -1,8 +1,8 @@
 <template>
   <div class="center">
-    <div class="card hover:shadow-lg hover:border-black">
+    <div class="card">
       <font-awesome-icon
-        icon="fa-solid fa-user-tie"
+        icon="fa-solid fa-brain"
         class="fa-xl items-center my-3 w-full"
       />
       <Select
@@ -66,18 +66,14 @@
         title="Click to close"
       />
     </div>
-    <div
-      v-if="images && images.length"
-      class="card hover:shadow-lg hover:border-black"
-    >
+    <div v-if="images && images.length" class="card">
       <h3 class="header">Images</h3>
       <div class="grid grid-cols-4 gap-4">
         <TransitionGroup name="images">
           <template v-for="image in images">
             <img
               class="object-cover border"
-              :src="image.image"
-              :title="image.value"
+              :src="image.url"
               loading="lazy"
               alt="Image"
             />
@@ -85,10 +81,7 @@
         </TransitionGroup>
       </div>
     </div>
-    <div
-      v-if="texts && texts.length"
-      class="card hover:shadow-lg hover:border-black"
-    >
+    <div v-if="texts && texts.length" class="card">
       <h3 class="header">Text</h3>
       <TransitionGroup name="list" tag="ul">
         <template v-for="text in texts" :key="index">
@@ -96,28 +89,25 @@
             <font-awesome-icon
               icon="fa-solid fa-chevron-right"
               class="px-4"
-            />{{ text }}
+            />{{ text.text }}
           </li>
         </template>
       </TransitionGroup>
     </div>
-    <div
-      v-if="completions && completions.length"
-      class="card hover:shadow-lg hover:border-black"
-    >
+    <div v-if="completions && completions.length" class="card">
       <h3 class="header">Completions</h3>
       <TransitionGroup name="completion">
         <template v-for="completion in completions" :key="index">
           <pre
-            @click="copy(completion)"
+            @click="copy(completion.text)"
             v-if="isJSON"
             title="Click to copy"
             class="card minicard bg-slate-900 text-gray-50 cursor-pointer"
           >
-            {{ completion }}
+            {{ completion.text }}
           </pre>
           <div v-else class="card minicard">
-            {{ completion }}
+            {{ completion.text }}
           </div>
         </template>
       </TransitionGroup>
@@ -132,23 +122,21 @@ import Select from "./components/Select.vue";
 import Button from "./components/Button.vue";
 import Alert from "./components/Alert.vue";
 
-import { useImageStore } from "../stores/image";
-import { useTextStore } from "../stores/text";
-import { useCompletionStore } from "../stores/Completion";
+import { useImageStore } from "./stores/image";
+import { useTextStore } from "./stores/text";
+import { useCompletionStore } from "./stores/completion";
 
-import { Configuration, OpenAIApi } from "openai";
 import { ref, computed } from "vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faBrain } from "@fortawesome/free-solid-svg-icons";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-library.add(faUserTie, faChevronRight);
 
-const configuration = new Configuration({
-  apiKey: import.meta.env.VITE_Open_AI_Key,
-});
-const openai = new OpenAIApi(configuration);
+import { Text } from "./models/Text";
+import { Image } from "./models/Image";
+
+library.add(faBrain, faChevronRight);
 
 export default {
   name: "App",
@@ -162,14 +150,14 @@ export default {
   },
   setup() {
     let prompt = ref("");
-    let images = ref([]);
-    let texts = ref([]);
-    let completions = ref([]);
-    let number = ref(0);
+    let images = ref<Image[]>([]);
+    let texts = ref<Text[]>([]);
+    let completions = ref<Text[]>([]);
+    let number = ref<number>(0);
     let type = ref("");
     let resolution = ref("");
-    let loading = ref(false);
-    let error = ref(false);
+    let loading = ref<boolean>(false);
+    let error = ref<boolean>(false);
     const completionStore = useCompletionStore();
     const textStore = useTextStore();
     const imageStore = useImageStore();
@@ -196,6 +184,7 @@ export default {
 
     function generate() {
       loading.value = true;
+      error.value = false;
       setTimeout(getStore, 300);
     }
 
@@ -208,25 +197,22 @@ export default {
     }
 
     function getStore() {
-      if (type.value === "Text") {
-        textStore.fetchText(openai, prompt.value);
-        texts.value = textStore.getText;
-        error.value = textStore.getTextError;
-      } else if (type.value === "Image") {
-        imageStore.fetchImage(
-          openai,
-          prompt.value,
-          number.value,
-          resolution.value
-        );
-        images.value = imageStore.getImage;
-        error.value = imageStore.getImageError;
-      } else {
-        completionStore.fetchCompletion(openai, prompt.value);
-        completions.value = completionStore.getCompletion;
-        error.value = textStore.getCompletionStore;
+      try {
+        if (type.value === "Text") {
+          textStore.fetchText(prompt.value);
+          texts.value = textStore.getText;
+        } else if (type.value === "Image") {
+          imageStore.fetchImage(prompt.value, number.value, resolution.value);
+          images.value = imageStore.getImage;
+        } else {
+          completionStore.fetchCompletion(prompt.value);
+          completions.value = completionStore.getCompletion;
+        }
+        loading.value = false;
+      } catch (e) {
+        loading.value = false;
+        error.value = true;
       }
-      loading.value = false;
     }
 
     return {
