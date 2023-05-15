@@ -122,9 +122,9 @@ import Select from "./components/Select.vue";
 import Button from "./components/Button.vue";
 import Alert from "./components/Alert.vue";
 
-import { useImageStore } from "./stores/image";
-import { useTextStore } from "./stores/text";
-import { useCompletionStore } from "./stores/completion";
+import { useImageStore } from "./store/image";
+import { useTextStore } from "./store/text";
+import { useCompletionStore } from "./store/completion";
 
 import { ref, computed } from "vue";
 
