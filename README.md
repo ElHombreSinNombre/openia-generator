@@ -1,4 +1,4 @@
-# Dall-E Generator
+# OpenIA Generator
 
 Technologies
 
