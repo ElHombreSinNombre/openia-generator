@@ -8,7 +8,7 @@
       v-if="loading"
       class="spinner align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
     ></div>
-    <template v-else>Generate</template>
+    <template v-else>{{ text }}</template>
   </button>
 </template>
 
@@ -16,6 +16,7 @@
 export default {
   name: "Button",
   props: {
+    text: { type: String, default: undefined },
     loading: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
   },

@@ -58,7 +58,12 @@
           required
         />
       </template>
-      <Button @generate="generate" :loading="loading" :disabled="isDisabled" />
+      <Button
+        @generate="generate"
+        :loading="loading"
+        :disabled="isDisabled"
+        text="Generate"
+      />
       <Alert
         v-if="error"
         text="Check API Key or internet connection"
