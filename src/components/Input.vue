@@ -2,7 +2,7 @@
   <input
     :type="type"
     @input="change($event)"
-    class="input focus:outline-none focus:shadow-outline"
+    class="input"
     :name="name"
     :onkeydown="type === 'number' ? 'return false' : 'return true'"
     :max="max"

@@ -1,9 +1,5 @@
 <template>
-  <select
-    :name="name"
-    @change="change($event)"
-    class="select focus:outline-none focus:shadow-outline"
-  >
+  <select :name="name" @change="change($event)" class="select">
     <option selected hidden>Select option</option>
     <option v-for="item in props.items" :value="item.value" :key="item.id">
       {{ item.text }}

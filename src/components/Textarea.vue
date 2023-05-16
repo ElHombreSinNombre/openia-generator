@@ -1,7 +1,7 @@
 <template>
   <textarea
     @input="change($event)"
-    class="input focus:outline-none focus:shadow-outline"
+    class="input"
     :rows="rows"
     :max="max"
     :cols="cols"

@@ -26,7 +26,7 @@ body {
     opacity: 1;
     transform: scale(1);
   }
-  
+
   .input,
   .select {
     @apply shadow;
@@ -39,6 +39,9 @@ body {
     @apply px-4;
     @apply text-gray-700;
     @apply leading-tight;
+    &:focus {
+      @apply outline-none;
+    }
   }
 
   .select {

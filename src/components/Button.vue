@@ -2,11 +2,7 @@
   <button
     :disabled="loading || disabled"
     @click="generate"
-    :class="
-      disabled
-        ? 'button disabled:opacity-50'
-        : 'button focus:outline-none focus:shadow-outline'
-    "
+    :class="disabled ? 'button disabled:opacity-50' : 'button'"
   >
     <div
       v-if="loading"
