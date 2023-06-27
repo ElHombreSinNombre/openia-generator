@@ -1,5 +1,5 @@
 <template>
-  <div class="alert cursor-pointer">{{ text }}</div>
+  <section class="alert cursor-pointer">{{ text }}</section>
 </template>
 
 <script lang="ts">

@@ -4,10 +4,10 @@
     @click="generate"
     :class="disabled ? 'button disabled:opacity-50' : 'button'"
   >
-    <div
+    <section
       v-if="loading"
       class="spinner align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-    ></div>
+    ></section>
     <template v-else>{{ text }}</template>
   </button>
 </template>

@@ -1,6 +1,6 @@
 <template>
-  <div class="center">
-    <div class="card">
+  <main class="center">
+    <section class="card">
       <font-awesome-icon
         icon="fa-solid fa-brain"
         class="fa-xl items-center my-3 w-full"
@@ -20,12 +20,12 @@
         maxlength="50"
         required
       >
-        <div
+        <article
           class="text-right"
           :class="{ 'text-red-500	': prompt.length === 50 }"
         >
           {{ prompt.length }} / 50
-        </div>
+        </article>
       </Input>
       <Textarea
         v-else
@@ -35,12 +35,12 @@
         name="prompt"
         required
       >
-        <div
+        <article
           class="text-right"
           :class="{ 'text-red-500	': prompt.length === 3000 }"
         >
           {{ prompt.length }} / 3000
-        </div>
+        </article>
       </Textarea>
       <template v-if="type === 'Image'">
         <Input
@@ -70,10 +70,10 @@
         @click="error = false"
         title="Click to close"
       />
-    </div>
-    <div v-if="images && images.length" class="card">
+    </section>
+    <section v-if="images && images.length" class="card">
       <h3 class="header">Images</h3>
-      <div class="grid grid-cols-4 gap-4">
+      <article class="grid grid-cols-4 gap-4">
         <TransitionGroup name="images">
           <template v-for="image in images">
             <img
@@ -84,9 +84,9 @@
             />
           </template>
         </TransitionGroup>
-      </div>
-    </div>
-    <div v-if="texts && texts.length" class="card">
+      </article>
+    </section>
+    <section v-if="texts && texts.length" class="card">
       <h3 class="header">Text</h3>
       <TransitionGroup name="list" tag="ul">
         <template v-for="text in texts" :key="index">
@@ -98,8 +98,8 @@
           </li>
         </template>
       </TransitionGroup>
-    </div>
-    <div v-if="completions && completions.length" class="card">
+    </section>
+    <section v-if="completions && completions.length" class="card">
       <h3 class="header">Completions</h3>
       <TransitionGroup name="completion">
         <template v-for="completion in completions" :key="index">
@@ -111,13 +111,13 @@
           >
             {{ completion.text }}
           </pre>
-          <div v-else class="card minicard">
+          <article v-else class="card minicard">
             {{ completion.text }}
-          </div>
+          </article>
         </template>
       </TransitionGroup>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
