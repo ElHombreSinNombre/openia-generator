@@ -1,12 +1,12 @@
-import { Image } from "./../models/Image";
+import { Image } from './../models/Image'
 
 const imageParsers = (data: any): Image[] => {
-  const image = data.map((image: any) => {
+  const image = data.map((image: Image) => {
     return {
-      url: image.url,
-    };
-  });
-  return image;
-};
+      url: image
+    }
+  })
+  return image
+}
 
-export default imageParsers;
+export default imageParsers

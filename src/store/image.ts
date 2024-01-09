@@ -1,25 +1,26 @@
-import { defineStore } from "pinia";
-import { OpenIA } from "../endpoints/openia";
-import { Image } from "./../models/Image";
-import imageParsers from "../parsers/image";
+import { defineStore } from 'pinia'
+import { OpenIA } from '../endpoints/openia'
+import { Image } from './../models/Image'
+import imageParsers from '../parsers/image'
 
-export const useImageStore = defineStore("image", {
+export const useImageStore = defineStore('image', {
   state: () => ({
-    image: [] as Image[],
+    image: [] as Image[]
   }),
   getters: {
     getImage(state: any) {
-      return state.image;
-    },
+      return state.image
+    }
   },
   actions: {
     async fetchImage(value: string, number: string, resolution: any) {
       try {
-        const image = await OpenIA.createImage(value, number, resolution);
-        const parsed = imageParsers(image);
-        this.image.push(...parsed);
-      } catch (e) {}
-      throw new Error("Failed to fetch images");
-    },
-  },
-});
+        const image = await OpenIA.createImage(value, number, resolution)
+        const parsed = imageParsers(image)
+        this.image = [...this.image, ...parsed]
+      } catch (e) {
+        throw new Error('Failed to fetch images')
+      }
+    }
+  }
+})

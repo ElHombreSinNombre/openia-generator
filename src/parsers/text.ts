@@ -1,12 +1,12 @@
-import { Text } from "./../models/Text";
+import { Text } from './../models/Text'
 
 const textParsers = (data: any): Text[] => {
-  const text = data.map((text: any) => {
+  const text = data.map((text: Text) => {
     return {
-      text: text.text,
-    };
-  });
-  return text;
-};
+      text: text
+    }
+  })
+  return text
+}
 
-export default textParsers;
+export default textParsers

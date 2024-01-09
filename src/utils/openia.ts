@@ -1,7 +1,8 @@
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from 'openai'
 
-const configuration = new Configuration({
+const configuration = new OpenAI({
   apiKey: import.meta.env.VITE_Open_AI_Key,
-});
+  dangerouslyAllowBrowser: true
+})
 
-export const openia = new OpenAIApi(configuration);
+export const openia = configuration

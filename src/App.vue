@@ -22,12 +22,12 @@
       >
         <article
           class="text-right"
-          :class="{ 'text-red-500	': prompt.length === 50 }"
+          :class="{ 'text-red-500	': prompt.length >= 50 }"
         >
           {{ prompt.length }} / 50
         </article>
       </Input>
-      <Textarea
+      <CTextarea
         v-else
         placeholder="Prompt"
         v-model="prompt"
@@ -37,15 +37,16 @@
       >
         <article
           class="text-right"
-          :class="{ 'text-red-500	': prompt.length === 3000 }"
+          :class="{ 'text-red-500': prompt.length >= 3000 }"
         >
           {{ prompt.length }} / 3000
         </article>
-      </Textarea>
+      </CTextarea>
+
       <template v-if="type === 'Image'">
         <Input
-          :min="1"
-          :max="10"
+          mixlength="1"
+          maxlength="10"
           type="number"
           name="Quantity"
           placeholder="Quantity"
@@ -121,124 +122,123 @@
 </template>
 
 <script lang="ts">
-import Input from "./components/Input.vue";
-import Textarea from "./components/Textarea.vue";
-import Select from "./components/Select.vue";
-import Button from "./components/Button.vue";
-import Alert from "./components/Alert.vue";
+  import Input from './components/Input.vue'
+  import CTextarea from './components/Textarea.vue'
+  import Select from './components/Select.vue'
+  import Button from './components/Button.vue'
+  import Alert from './components/Alert.vue'
 
-import { useImageStore } from "./store/image";
-import { useTextStore } from "./store/text";
-import { useCompletionStore } from "./store/completion";
+  import { useImageStore } from './store/image'
+  import { useTextStore } from './store/text'
+  import { useCompletionStore } from './store/completion'
 
-import { ref, computed } from "vue";
+  import { ref, computed } from 'vue'
 
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faBrain } from "@fortawesome/free-solid-svg-icons";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { faBrain } from '@fortawesome/free-solid-svg-icons'
+  import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
-import { Text } from "./models/Text";
-import { Image } from "./models/Image";
+  import { Text } from './models/Text'
+  import { Image } from './models/Image'
 
-library.add(faBrain, faChevronRight);
+  library.add(faBrain, faChevronRight)
 
-export default {
-  name: "App",
-  components: {
-    Input,
-    Select,
-    Textarea,
-    Button,
-    Alert,
-    FontAwesomeIcon,
-  },
-  setup() {
-    let prompt = ref("");
-    let images = ref<Image[]>([]);
-    let texts = ref<Text[]>([]);
-    let completions = ref<Text[]>([]);
-    let number = ref<number>(0);
-    let type = ref("");
-    let resolution = ref("");
-    let loading = ref<boolean>(false);
-    let error = ref<boolean>(false);
-    const completionStore = useCompletionStore();
-    const textStore = useTextStore();
-    const imageStore = useImageStore();
+  export default {
+    name: 'App',
+    components: {
+      Input,
+      Select,
+      CTextarea,
+      Button,
+      Alert,
+      FontAwesomeIcon
+    },
+    setup() {
+      let prompt = ref('')
+      let images = ref<Image[]>([])
+      let texts = ref<Text[]>([])
+      let completions = ref<Text[]>([])
+      let number = ref<number>(0)
+      let type = ref('')
+      let resolution = ref('')
+      let loading = ref<boolean>(false)
+      let error = ref<boolean>(false)
+      const completionStore = useCompletionStore()
+      const textStore = useTextStore()
+      const imageStore = useImageStore()
 
-    const sizes = [
-      { text: "256x256", value: "256x256" },
-      { text: "512x512", value: "512x512" },
-      { text: "1024x1024", value: "1024x1024" },
-    ];
+      const sizes = [
+        { text: '256x256', value: '256x256' },
+        { text: '512x512', value: '512x512' },
+        { text: '1024x1024', value: '1024x1024' }
+      ]
 
-    const types = [
-      { text: "Text", value: "Text" },
-      { text: "Completion", value: "Completion" },
-      { text: "Image", value: "Image" },
-    ];
+      const types = [
+        { text: 'Text', value: 'Text' },
+        { text: 'Completion', value: 'Completion' },
+        { text: 'Image', value: 'Image' }
+      ]
 
-    const isDisabled = computed(() => {
-      return type.value === "Image"
-        ? !prompt.value || !type.value || !resolution.value || !number.value
-        : !type.value || !prompt.value;
-    });
+      const isDisabled = computed(() => {
+        return type.value === 'Image'
+          ? !prompt.value || !type.value || !resolution.value || !number.value
+          : !type.value || !prompt.value
+      })
 
-    const isJSON = computed(() => prompt.value.toLowerCase().includes("json"));
+      const isJSON = computed(() => prompt.value.toLowerCase().includes('json'))
 
-    function generate() {
-      loading.value = true;
-      error.value = false;
-      setTimeout(getStore, 300);
-    }
+      function generate() {
+        loading.value = true
+        error.value = false
+        setTimeout(getStore, 300)
+      }
 
-    function copy(completion: string) {
-      navigator.clipboard.writeText(completion);
-    }
+      function copy(completion: string) {
+        navigator.clipboard.writeText(completion)
+      }
 
-    function clear() {
-      prompt.value = "";
-    }
+      function clear() {
+        prompt.value = ''
+      }
 
-    function getStore() {
-      try {
-        if (type.value === "Text") {
-          textStore.fetchText(prompt.value);
-          texts.value = textStore.getText;
-        } else if (type.value === "Image") {
-          imageStore.fetchImage(prompt.value, number.value, resolution.value);
-          images.value = imageStore.getImage;
-        } else {
-          completionStore.fetchCompletion(prompt.value);
-          completions.value = completionStore.getCompletion;
+      function getStore() {
+        try {
+          if (type.value === 'Text') {
+            textStore.fetchText(prompt.value)
+            texts.value = textStore.getText
+          } else if (type.value === 'Image') {
+            imageStore.fetchImage(prompt.value, number.value, resolution.value)
+            images.value = imageStore.getImage
+          } else {
+            completionStore.fetchCompletion(prompt.value)
+            completions.value = completionStore.getCompletion
+          }
+          loading.value = false
+        } catch (e) {
+          loading.value = false
+          error.value = true
         }
-        loading.value = false;
-      } catch (e) {
-        loading.value = false;
-        error.value = true;
+      }
+
+      return {
+        generate,
+        error,
+        isJSON,
+        prompt,
+        images,
+        number,
+        type,
+        copy,
+        clear,
+        isDisabled,
+        resolution,
+        completions,
+        loading,
+        sizes,
+        types,
+        texts
       }
     }
-
-    return {
-      generate,
-      error,
-      isJSON,
-      prompt,
-      images,
-      number,
-      type,
-      copy,
-      clear,
-      isDisabled,
-      resolution,
-      completions,
-      loading,
-      sizes,
-      types,
-      texts,
-    };
-  },
-};
+  }
 </script>
-

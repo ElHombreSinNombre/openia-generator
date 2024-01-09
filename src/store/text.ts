@@ -1,26 +1,26 @@
-import { defineStore } from "pinia";
-import { OpenIA } from "../endpoints/openia";
-import { Text } from "./../models/Text";
-import textParsers from "../parsers/text";
+import { defineStore } from 'pinia'
+import { OpenIA } from '../endpoints/openia'
+import { Text } from './../models/Text'
+import textParsers from '../parsers/text'
 
-export const useTextStore = defineStore("text", {
+export const useTextStore = defineStore('text', {
   state: () => ({
-    text: [] as Text[],
+    text: [] as Text[]
   }),
   getters: {
     getText(state: any) {
-      return state.text;
-    },
+      return state.text
+    }
   },
   actions: {
     async fetchText(value: string) {
       try {
-        const text = await OpenIA.fetchCompletion(value);
-        const parsed = textParsers(text);
-        this.text.push(...parsed);
+        const text = await OpenIA.fetchCompletion(value)
+        const parsed = textParsers(text)
+        this.text = [...this.text, ...parsed]
       } catch (e) {
-        throw new Error("Failed to fetch text");
+        throw new Error('Failed to fetch text')
       }
-    },
-  },
-});
+    }
+  }
+})
