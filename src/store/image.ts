@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { OpenIA } from '../endpoints/openia'
-import { Image } from './../models/Image'
+import { Image } from './../types/Image'
 import imageParsers from '../parsers/image'
 
 export const useImageStore = defineStore('image', {

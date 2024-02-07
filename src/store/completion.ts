@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { OpenIA } from './../endpoints/openia'
-import { Text } from './../models/Text'
+import { Text } from './../types/Text'
 import textParsers from '../parsers/text'
 
 export const useCompletionStore = defineStore('completion', {

@@ -1,4 +1,4 @@
-import { Image } from './../models/Image'
+import { Image } from './../types/Image'
 
 const imageParsers = (data: any): Image[] => {
   const image = data.map((image: Image) => {

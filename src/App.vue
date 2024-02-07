@@ -139,8 +139,8 @@
   import { faBrain } from '@fortawesome/free-solid-svg-icons'
   import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
-  import { Text } from './models/Text'
-  import { Image } from './models/Image'
+  import { Text } from './types/Text'
+  import { Image } from './types/Image'
 
   library.add(faBrain, faChevronRight)
 
