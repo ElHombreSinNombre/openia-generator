@@ -1,17 +1,25 @@
 # OpenIA Generator
 
-Technologies
+A minimalist content generation application using the **OpenAI API**.
+
+## Technologies
 
 - **[Vite](https://vitejs.dev/)**
 - **[Tailwind](https://tailwindcss.com/)**
 - **[Vue 3](https://vuejs.org/)**
 - **[Pinia](https://pinia.vuejs.org/)**
 
-Clone _.env.local.example_ and rename as _.env.local_
+## How to deploy
 
-- Change **[API KEY](https://platform.openai.com/account/api-keys)**
+**Rename ** the file `.env.local.example` as `.env.local` and fill in** your OpenAI API
+   
+| Key | Source |
+| :--- | :--- |
+| `VITE_OPENAI_API_KEY` | Get your key from the **[OpenAI Platform](https://platform.openai.com/account/api-keys)**. |
 
-Run
+Run the following commands in your terminal
 
-- _npm install_
-- _npm run dev_
+```bash
+npm install
+npm run dev
+```
