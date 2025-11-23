@@ -11,7 +11,7 @@ A minimalist content generation application using the **OpenAI API**.
 
 ## How to deploy
 
-**Rename ** the file `.env.local.example` as `.env.local` and fill in** your OpenAI API
+**Rename** the file `.env.local.example` as `.env.local` and **fill in** your OpenAI API
    
 | Key | Source |
 | :--- | :--- |
